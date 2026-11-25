@@ -1,15 +1,20 @@
+import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { compareFindings, key, multisetMinus, parseKey, parseOutput } from '../src/lib/findings.ts';
 
-const T = '/work/app';
+// A native absolute path, with a drive letter on Windows, as linters print it.
+const T = resolve('/work/app');
+const abs = (file: string) => join(T, file);
+const url = (file: string) => pathToFileURL(abs(file)).href;
 
 // Real output shapes, trimmed: what each family prints for a debugger statement on
 // line 2, an == on line 3 and a file that does not parse.
 const ESLINT = JSON.stringify([
-  { filePath: `${T}/x.ts`, messages: [{ ruleId: 'no-debugger', line: 2, column: 3 }, { ruleId: 'eqeqeq', line: 3, column: 20 }] },
-  { filePath: `${T}/y.ts`, messages: [] },
-  { filePath: `${T}/z.ts`, messages: [{ ruleId: null, line: 1, column: 15, fatal: true }] },
-  { filePath: `${T}/w.ts`, messages: [{ ruleId: 'n/prefer-node-protocol', line: 1, column: 1 }] },
+  { filePath: abs('x.ts'), messages: [{ ruleId: 'no-debugger', line: 2, column: 3 }, { ruleId: 'eqeqeq', line: 3, column: 20 }] },
+  { filePath: abs('y.ts'), messages: [] },
+  { filePath: abs('z.ts'), messages: [{ ruleId: null, line: 1, column: 15, fatal: true }] },
+  { filePath: abs('w.ts'), messages: [{ ruleId: 'n/prefer-node-protocol', line: 1, column: 1 }] },
 ]);
 const OXLINT = JSON.stringify({
   number_of_files: 4,
@@ -29,10 +34,10 @@ const BIOME = JSON.stringify({
   ],
 });
 const DENO = [
-  `Error linting: ${T}/z.ts`,
+  `Error linting: ${abs('z.ts')}`,
   '   SyntaxError: Expression expected',
-  `file://${T}/x.ts: line 2, col 3 - \`debugger\` statement is not allowed (no-debugger)`,
-  `file://${T}/x.ts: line 3, col 18 - expected '===' and instead saw '=='. (eqeqeq)`,
+  `${url('x.ts')}: line 2, col 3 - \`debugger\` statement is not allowed (no-debugger)`,
+  `${url('x.ts')}: line 3, col 18 - expected '===' and instead saw '=='. (eqeqeq)`,
   'Found 2 problems',
   'Checked 4 files',
 ].join('\n');
