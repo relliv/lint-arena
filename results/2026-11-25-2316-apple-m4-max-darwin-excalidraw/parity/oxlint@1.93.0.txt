@@ -1,0 +1,47 @@
+# extra: by-line findings only oxlint@1.93.0 reported
+packages/common/src/utils.ts:1138 require-await
+packages/element/tests/frame.test.tsx:541 require-await
+packages/excalidraw/clipboard.ts:331 require-await
+packages/excalidraw/components/LibraryMenu.tsx:92 require-await
+packages/excalidraw/components/Sidebar/siderbar.test.helpers.tsx:11 require-await
+packages/excalidraw/data/blob.ts:239 require-await
+packages/excalidraw/global.d.ts:65 no-redeclare
+packages/excalidraw/global.d.ts:68 no-redeclare
+
+# missing: by-line findings only eslint@10.15.0 reported
+excalidraw-app/collab/Portal.tsx:49 no-unused-vars
+packages/common/src/utils.ts:1141 require-await
+packages/element/tests/frame.test.tsx:543 require-await
+packages/element/tests/resize.test.tsx:353 no-unused-vars
+packages/element/tests/textWrapping.test.ts:257 no-irregular-whitespace
+packages/element/tests/textWrapping.test.ts:269 no-irregular-whitespace
+packages/element/tests/textWrapping.test.ts:276 no-irregular-whitespace
+packages/element/tests/textWrapping.test.ts:290 no-irregular-whitespace
+packages/element/tests/textWrapping.test.ts:297 no-irregular-whitespace
+packages/element/tests/textWrapping.test.ts:304 no-irregular-whitespace
+packages/element/tests/textWrapping.test.ts:597 no-irregular-whitespace
+packages/excalidraw/charts/charts.helpers.ts:242 no-unused-vars
+packages/excalidraw/charts/charts.helpers.ts:258 no-unused-vars
+packages/excalidraw/clipboard.ts:334 require-await
+packages/excalidraw/components/App.tsx:3832 no-unused-vars
+packages/excalidraw/components/App.tsx:7392 no-unused-vars
+packages/excalidraw/components/LayerUI.tsx:765 no-unused-vars
+packages/excalidraw/components/LayerUI.tsx:766 no-unused-vars
+packages/excalidraw/components/LibraryMenu.tsx:95 require-await
+packages/excalidraw/components/Sidebar/siderbar.test.helpers.tsx:17 require-await
+packages/excalidraw/data/blob.ts:241 require-await
+packages/excalidraw/tests/contextmenu.test.tsx:436 no-unused-vars
+packages/excalidraw/tests/contextmenu.test.tsx:437 no-unused-vars
+packages/excalidraw/tests/contextmenu.test.tsx:438 no-unused-vars
+packages/excalidraw/tests/contextmenu.test.tsx:439 no-unused-vars
+packages/excalidraw/tests/contextmenu.test.tsx:440 no-unused-vars
+packages/excalidraw/tests/contextmenu.test.tsx:441 no-unused-vars
+packages/excalidraw/tests/contextmenu.test.tsx:442 no-unused-vars
+packages/excalidraw/tests/contextmenu.test.tsx:446 no-unused-vars
+packages/excalidraw/tests/contextmenu.test.tsx:447 no-unused-vars
+packages/excalidraw/tests/contextmenu.test.tsx:448 no-unused-vars
+packages/excalidraw/tests/contextmenu.test.tsx:449 no-unused-vars
+packages/excalidraw/tests/contextmenu.test.tsx:450 no-unused-vars
+packages/excalidraw/tests/contextmenu.test.tsx:451 no-unused-vars
+packages/excalidraw/tests/contextmenu.test.tsx:452 no-unused-vars
+packages/excalidraw/tests/history.test.tsx:95 no-unused-vars

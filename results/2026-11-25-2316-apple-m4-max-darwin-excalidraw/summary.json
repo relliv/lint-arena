@@ -1,0 +1,513 @@
+{
+  "schema": 1,
+  "id": "2026-11-25-2316-apple-m4-max-darwin-excalidraw",
+  "label": "excalidraw",
+  "date": "2026-11-25T23:16:43.183Z",
+  "source": {
+    "kind": "local"
+  },
+  "machine": {
+    "platform": "darwin-arm64",
+    "cpu": "Apple M4 Max",
+    "cores": 16,
+    "memoryGiB": 48,
+    "os": "macOS 27.0.1 (26A434)",
+    "node": "v26.0.0"
+  },
+  "reference": "eslint@10.15.0",
+  "rounds": 7,
+  "files": 735,
+  "rules": 53,
+  "referenceFindings": 938,
+  "settings": [
+    {
+      "threads": "default",
+      "linters": [
+        {
+          "id": "oxlint@1.94.0",
+          "family": "oxlint",
+          "version": "1.94.0",
+          "runs": 7,
+          "median": 0.048550375,
+          "min": 0.04558475,
+          "max": 0.050539375,
+          "cpu": 0.17,
+          "rssMiB": 129.78125,
+          "speedup": 71.33204000998963
+        },
+        {
+          "id": "oxlint@1.93.0",
+          "family": "oxlint",
+          "version": "1.93.0",
+          "runs": 7,
+          "median": 0.049878625,
+          "min": 0.047482166,
+          "max": 0.059574,
+          "cpu": 0.17,
+          "rssMiB": 130.46875,
+          "speedup": 69.43249321728496
+        },
+        {
+          "id": "biome@2.6.8",
+          "family": "biome",
+          "version": "2.6.8",
+          "runs": 7,
+          "median": 0.169480417,
+          "min": 0.167406833,
+          "max": 0.171872166,
+          "cpu": 0.9199999999999999,
+          "rssMiB": 271,
+          "speedup": 20.43420327435234
+        },
+        {
+          "id": "biome@2.6.7",
+          "family": "biome",
+          "version": "2.6.7",
+          "runs": 7,
+          "median": 0.17674725,
+          "min": 0.17049375,
+          "max": 0.189099458,
+          "cpu": 1.03,
+          "rssMiB": 269.640625,
+          "speedup": 19.594066057604856
+        },
+        {
+          "id": "deno@2.9.6",
+          "family": "deno",
+          "version": "2.9.6",
+          "runs": 7,
+          "median": 0.213968875,
+          "min": 0.2102915,
+          "max": 0.225618083,
+          "cpu": 2.61,
+          "rssMiB": 87.71875,
+          "speedup": 16.185519001303344
+        },
+        {
+          "id": "deno@2.9.5",
+          "family": "deno",
+          "version": "2.9.5",
+          "runs": 7,
+          "median": 0.214046125,
+          "min": 0.207498958,
+          "max": 0.227096959,
+          "cpu": 2.6199999999999997,
+          "rssMiB": 91.296875,
+          "speedup": 16.179677590519333
+        },
+        {
+          "id": "eslint@10.15.0",
+          "family": "eslint",
+          "version": "10.15.0",
+          "runs": 7,
+          "median": 3.463197292,
+          "min": 3.394203083,
+          "max": 3.5697105,
+          "cpu": 6.55,
+          "rssMiB": 872.515625,
+          "speedup": 1
+        },
+        {
+          "id": "eslint@10.14.0",
+          "family": "eslint",
+          "version": "10.14.0",
+          "runs": 7,
+          "median": 3.479795459,
+          "min": 3.438522292,
+          "max": 3.670028041,
+          "cpu": 6.57,
+          "rssMiB": 801.640625,
+          "speedup": 0.9952301314271012
+        }
+      ]
+    },
+    {
+      "threads": "1",
+      "linters": [
+        {
+          "id": "oxlint@1.94.0",
+          "family": "oxlint",
+          "version": "1.94.0",
+          "runs": 7,
+          "median": 0.108330042,
+          "min": 0.104987833,
+          "max": 0.115960625,
+          "cpu": 0.1,
+          "rssMiB": 77.15625,
+          "speedup": 32.40985465509189
+        },
+        {
+          "id": "oxlint@1.93.0",
+          "family": "oxlint",
+          "version": "1.93.0",
+          "runs": 7,
+          "median": 0.10987975,
+          "min": 0.108032625,
+          "max": 0.115619708,
+          "cpu": 0.1,
+          "rssMiB": 76.890625,
+          "speedup": 31.952756681736172
+        },
+        {
+          "id": "eslint@10.15.0",
+          "family": "eslint",
+          "version": "10.15.0",
+          "runs": 7,
+          "median": 3.510960916,
+          "min": 3.406147166,
+          "max": 3.687048708,
+          "cpu": 6.57,
+          "rssMiB": 902.703125,
+          "speedup": 1
+        },
+        {
+          "id": "eslint@10.14.0",
+          "family": "eslint",
+          "version": "10.14.0",
+          "runs": 7,
+          "median": 3.534517833,
+          "min": 3.499508416,
+          "max": 3.610365791,
+          "cpu": 6.5,
+          "rssMiB": 742.5,
+          "speedup": 0.9933351823040583
+        }
+      ]
+    }
+  ],
+  "parity": [
+    {
+      "id": "eslint@10.15.0",
+      "parity": "identical",
+      "findings": 938,
+      "outside": 16,
+      "files": 735,
+      "extra": 0,
+      "missing": 0,
+      "nearDirective": {
+        "extra": 0,
+        "missing": 0
+      },
+      "agreement": 1,
+      "topRules": []
+    },
+    {
+      "id": "biome@2.6.7",
+      "parity": "differs",
+      "findings": 993,
+      "outside": 0,
+      "files": 735,
+      "extra": 220,
+      "missing": 165,
+      "nearDirective": {
+        "extra": 122,
+        "missing": 0
+      },
+      "agreement": 0.82409381663113,
+      "topRules": [
+        {
+          "rule": "no-unused-vars",
+          "extra": 26,
+          "missing": 118
+        },
+        {
+          "rule": "no-empty",
+          "extra": 92,
+          "missing": 0
+        },
+        {
+          "rule": "no-var",
+          "extra": 28,
+          "missing": 0
+        },
+        {
+          "rule": "eqeqeq",
+          "extra": 26,
+          "missing": 0
+        },
+        {
+          "rule": "require-await",
+          "extra": 6,
+          "missing": 15
+        },
+        {
+          "rule": "no-await-in-loop",
+          "extra": 4,
+          "missing": 12
+        },
+        {
+          "rule": "prefer-const",
+          "extra": 2,
+          "missing": 10
+        },
+        {
+          "rule": "no-prototype-builtins",
+          "extra": 11,
+          "missing": 0
+        }
+      ]
+    },
+    {
+      "id": "biome@2.6.8",
+      "parity": "differs",
+      "findings": 993,
+      "outside": 0,
+      "files": 735,
+      "extra": 220,
+      "missing": 165,
+      "nearDirective": {
+        "extra": 122,
+        "missing": 0
+      },
+      "agreement": 0.82409381663113,
+      "topRules": [
+        {
+          "rule": "no-unused-vars",
+          "extra": 26,
+          "missing": 118
+        },
+        {
+          "rule": "no-empty",
+          "extra": 92,
+          "missing": 0
+        },
+        {
+          "rule": "no-var",
+          "extra": 28,
+          "missing": 0
+        },
+        {
+          "rule": "eqeqeq",
+          "extra": 26,
+          "missing": 0
+        },
+        {
+          "rule": "require-await",
+          "extra": 6,
+          "missing": 15
+        },
+        {
+          "rule": "no-await-in-loop",
+          "extra": 4,
+          "missing": 12
+        },
+        {
+          "rule": "prefer-const",
+          "extra": 2,
+          "missing": 10
+        },
+        {
+          "rule": "no-prototype-builtins",
+          "extra": 11,
+          "missing": 0
+        }
+      ]
+    },
+    {
+      "id": "deno@2.9.5",
+      "parity": "differs",
+      "findings": 1152,
+      "outside": 0,
+      "files": 735,
+      "extra": 296,
+      "missing": 82,
+      "nearDirective": {
+        "extra": 137,
+        "missing": 0
+      },
+      "agreement": 0.9125799573560768,
+      "topRules": [
+        {
+          "rule": "no-unused-vars",
+          "extra": 163,
+          "missing": 31
+        },
+        {
+          "rule": "no-case-declarations",
+          "extra": 23,
+          "missing": 23
+        },
+        {
+          "rule": "eqeqeq",
+          "extra": 28,
+          "missing": 2
+        },
+        {
+          "rule": "no-var",
+          "extra": 28,
+          "missing": 0
+        },
+        {
+          "rule": "default-param-last",
+          "extra": 13,
+          "missing": 0
+        },
+        {
+          "rule": "prefer-const",
+          "extra": 2,
+          "missing": 10
+        },
+        {
+          "rule": "require-await",
+          "extra": 6,
+          "missing": 6
+        },
+        {
+          "rule": "no-prototype-builtins",
+          "extra": 11,
+          "missing": 0
+        }
+      ]
+    },
+    {
+      "id": "deno@2.9.6",
+      "parity": "differs",
+      "findings": 1152,
+      "outside": 0,
+      "files": 735,
+      "extra": 296,
+      "missing": 82,
+      "nearDirective": {
+        "extra": 137,
+        "missing": 0
+      },
+      "agreement": 0.9125799573560768,
+      "topRules": [
+        {
+          "rule": "no-unused-vars",
+          "extra": 163,
+          "missing": 31
+        },
+        {
+          "rule": "no-case-declarations",
+          "extra": 23,
+          "missing": 23
+        },
+        {
+          "rule": "eqeqeq",
+          "extra": 28,
+          "missing": 2
+        },
+        {
+          "rule": "no-var",
+          "extra": 28,
+          "missing": 0
+        },
+        {
+          "rule": "default-param-last",
+          "extra": 13,
+          "missing": 0
+        },
+        {
+          "rule": "prefer-const",
+          "extra": 2,
+          "missing": 10
+        },
+        {
+          "rule": "require-await",
+          "extra": 6,
+          "missing": 6
+        },
+        {
+          "rule": "no-prototype-builtins",
+          "extra": 11,
+          "missing": 0
+        }
+      ]
+    },
+    {
+      "id": "eslint@10.14.0",
+      "parity": "identical",
+      "findings": 938,
+      "outside": 16,
+      "files": 735,
+      "extra": 0,
+      "missing": 0,
+      "nearDirective": {
+        "extra": 0,
+        "missing": 0
+      },
+      "agreement": 1,
+      "topRules": []
+    },
+    {
+      "id": "oxlint@1.93.0",
+      "parity": "differs",
+      "findings": 910,
+      "outside": 0,
+      "files": 735,
+      "extra": 8,
+      "missing": 36,
+      "nearDirective": {
+        "extra": 0,
+        "missing": 0
+      },
+      "agreement": 0.9616204690831557,
+      "topRules": [
+        {
+          "rule": "no-unused-vars",
+          "extra": 0,
+          "missing": 23
+        },
+        {
+          "rule": "require-await",
+          "extra": 6,
+          "missing": 6
+        },
+        {
+          "rule": "no-irregular-whitespace",
+          "extra": 0,
+          "missing": 7
+        },
+        {
+          "rule": "no-redeclare",
+          "extra": 2,
+          "missing": 0
+        }
+      ]
+    },
+    {
+      "id": "oxlint@1.94.0",
+      "parity": "differs",
+      "findings": 910,
+      "outside": 0,
+      "files": 735,
+      "extra": 8,
+      "missing": 36,
+      "nearDirective": {
+        "extra": 0,
+        "missing": 0
+      },
+      "agreement": 0.9616204690831557,
+      "topRules": [
+        {
+          "rule": "no-unused-vars",
+          "extra": 0,
+          "missing": 23
+        },
+        {
+          "rule": "require-await",
+          "extra": 6,
+          "missing": 6
+        },
+        {
+          "rule": "no-irregular-whitespace",
+          "extra": 0,
+          "missing": 7
+        },
+        {
+          "rule": "no-redeclare",
+          "extra": 2,
+          "missing": 0
+        }
+      ]
+    }
+  ],
+  "unavailable": [],
+  "untimed": [],
+  "project": {
+    "repo": "https://github.com/excalidraw/excalidraw",
+    "commit": "dabd83c4aa6b9e42d0dd0a42be62200eb8e3cce9",
+    "description": "A whiteboard app in React and TypeScript: mostly TSX, with a few large modules"
+  }
+}
