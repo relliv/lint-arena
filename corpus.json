@@ -1,0 +1,19 @@
+{
+  "$comment": "Pinned public projects for runs that are comparable over time and across machines (CI runs these). Fields: repo and sha: what `pnpm arena corpus setup` clones into the corpus folder; exclude: paths left out of the file set, relative to the checkout, on top of what every run skips (node_modules, dist, dot folders, what git ignores); excludeNote: why. Linting reads source only, so no project is installed or built.",
+  "projects": [
+    {
+      "name": "vite",
+      "description": "Frontend tooling monorepo: the dev server, build pipeline, playgrounds and templates, in TypeScript and JavaScript",
+      "repo": "https://github.com/vitejs/vite",
+      "sha": "cce559ab158cc6b177d0911a0bea73436b48faff",
+      "exclude": []
+    },
+    {
+      "name": "excalidraw",
+      "description": "A whiteboard app in React and TypeScript: mostly TSX, with a few large modules",
+      "repo": "https://github.com/excalidraw/excalidraw",
+      "sha": "dabd83c4aa6b9e42d0dd0a42be62200eb8e3cce9",
+      "exclude": []
+    }
+  ]
+}
