@@ -1,0 +1,383 @@
+{
+  "$comment": "The shared rule set: rules every linter family implements, under each family's own name. Sources: ESLint core rules (eslint/use-at-your-own-risk builtinRules), oxlint --rules (eslint scope, not type aware), deno lint --rules, and Biome's own mapping from `biome migrate eslint`, asked one rule at a time. eslint names the typescript-eslint extension where one exists, as a TypeScript project would. biomeOptions are the options `biome migrate eslint` writes for ESLint's defaults. Left out: no-cond-assign, no-throw-literal and no-invalid-regexp (no Biome rule), no-undef (each linter has its own globals), no-with and no-delete-var (sloppy mode only; Biome maps no-delete-var to noDelete, which forbids every delete). Also left out, because `rules verify` showed they mean different things: no-inner-declarations (ESLint 9 and oxlint report nothing in ES modules by default, Deno and Biome report function declarations in blocks) and constructor-super (Biome checks invalid super() calls, not a missing one). Every rule has a fixture in fixtures/rules/<id>.* that `pnpm arena rules verify` lints with every family.",
+  "rules": [
+    {
+      "id": "default-param-last",
+      "eslint": "@typescript-eslint/default-param-last",
+      "oxlint": "default-param-last",
+      "biome": "style/useDefaultParameterLast",
+      "deno": "default-param-last"
+    },
+    {
+      "id": "eqeqeq",
+      "eslint": "eqeqeq",
+      "oxlint": "eqeqeq",
+      "biome": "suspicious/noDoubleEquals",
+      "deno": "eqeqeq",
+      "biomeOptions": {
+        "ignoreNull": false
+      }
+    },
+    {
+      "id": "for-direction",
+      "eslint": "for-direction",
+      "oxlint": "for-direction",
+      "biome": "correctness/useValidForDirection",
+      "deno": "for-direction"
+    },
+    {
+      "id": "getter-return",
+      "eslint": "getter-return",
+      "oxlint": "getter-return",
+      "biome": "suspicious/useGetterReturn",
+      "deno": "getter-return"
+    },
+    {
+      "id": "guard-for-in",
+      "eslint": "guard-for-in",
+      "oxlint": "guard-for-in",
+      "biome": "suspicious/useGuardForIn",
+      "deno": "guard-for-in"
+    },
+    {
+      "id": "no-array-constructor",
+      "eslint": "@typescript-eslint/no-array-constructor",
+      "oxlint": "no-array-constructor",
+      "biome": "style/useArrayLiterals",
+      "deno": "no-array-constructor"
+    },
+    {
+      "id": "no-async-promise-executor",
+      "eslint": "no-async-promise-executor",
+      "oxlint": "no-async-promise-executor",
+      "biome": "suspicious/noAsyncPromiseExecutor",
+      "deno": "no-async-promise-executor"
+    },
+    {
+      "id": "no-await-in-loop",
+      "eslint": "no-await-in-loop",
+      "oxlint": "no-await-in-loop",
+      "biome": "performance/noAwaitInLoops",
+      "deno": "no-await-in-loop"
+    },
+    {
+      "id": "no-case-declarations",
+      "eslint": "no-case-declarations",
+      "oxlint": "no-case-declarations",
+      "biome": "correctness/noSwitchDeclarations",
+      "deno": "no-case-declarations"
+    },
+    {
+      "id": "no-class-assign",
+      "eslint": "no-class-assign",
+      "oxlint": "no-class-assign",
+      "biome": "suspicious/noClassAssign",
+      "deno": "no-class-assign"
+    },
+    {
+      "id": "no-compare-neg-zero",
+      "eslint": "no-compare-neg-zero",
+      "oxlint": "no-compare-neg-zero",
+      "biome": "suspicious/noCompareNegZero",
+      "deno": "no-compare-neg-zero"
+    },
+    {
+      "id": "no-console",
+      "eslint": "no-console",
+      "oxlint": "no-console",
+      "biome": "suspicious/noConsole",
+      "deno": "no-console"
+    },
+    {
+      "id": "no-const-assign",
+      "eslint": "no-const-assign",
+      "oxlint": "no-const-assign",
+      "biome": "correctness/noConstAssign",
+      "deno": "no-const-assign"
+    },
+    {
+      "id": "no-constant-condition",
+      "eslint": "no-constant-condition",
+      "oxlint": "no-constant-condition",
+      "biome": "correctness/noConstantCondition",
+      "deno": "no-constant-condition"
+    },
+    {
+      "id": "no-control-regex",
+      "eslint": "no-control-regex",
+      "oxlint": "no-control-regex",
+      "biome": "suspicious/noControlCharactersInRegex",
+      "deno": "no-control-regex"
+    },
+    {
+      "id": "no-debugger",
+      "eslint": "no-debugger",
+      "oxlint": "no-debugger",
+      "biome": "suspicious/noDebugger",
+      "deno": "no-debugger"
+    },
+    {
+      "id": "no-dupe-class-members",
+      "eslint": "@typescript-eslint/no-dupe-class-members",
+      "oxlint": "no-dupe-class-members",
+      "biome": "suspicious/noDuplicateClassMembers",
+      "deno": "no-dupe-class-members"
+    },
+    {
+      "id": "no-dupe-else-if",
+      "eslint": "no-dupe-else-if",
+      "oxlint": "no-dupe-else-if",
+      "biome": "suspicious/noDuplicateElseIf",
+      "deno": "no-dupe-else-if"
+    },
+    {
+      "id": "no-dupe-keys",
+      "eslint": "no-dupe-keys",
+      "oxlint": "no-dupe-keys",
+      "biome": "suspicious/noDuplicateObjectKeys",
+      "deno": "no-dupe-keys"
+    },
+    {
+      "id": "no-duplicate-case",
+      "eslint": "no-duplicate-case",
+      "oxlint": "no-duplicate-case",
+      "biome": "suspicious/noDuplicateCase",
+      "deno": "no-duplicate-case"
+    },
+    {
+      "id": "no-empty",
+      "eslint": "no-empty",
+      "oxlint": "no-empty",
+      "biome": "suspicious/noEmptyBlockStatements",
+      "deno": "no-empty"
+    },
+    {
+      "id": "no-empty-character-class",
+      "eslint": "no-empty-character-class",
+      "oxlint": "no-empty-character-class",
+      "biome": "correctness/noEmptyCharacterClassInRegex",
+      "deno": "no-empty-character-class"
+    },
+    {
+      "id": "no-empty-pattern",
+      "eslint": "no-empty-pattern",
+      "oxlint": "no-empty-pattern",
+      "biome": "correctness/noEmptyPattern",
+      "deno": "no-empty-pattern"
+    },
+    {
+      "id": "no-eval",
+      "eslint": "no-eval",
+      "oxlint": "no-eval",
+      "biome": "security/noGlobalEval",
+      "deno": "no-eval"
+    },
+    {
+      "id": "no-ex-assign",
+      "eslint": "no-ex-assign",
+      "oxlint": "no-ex-assign",
+      "biome": "suspicious/noCatchAssign",
+      "deno": "no-ex-assign"
+    },
+    {
+      "id": "no-extra-boolean-cast",
+      "eslint": "no-extra-boolean-cast",
+      "oxlint": "no-extra-boolean-cast",
+      "biome": "complexity/noExtraBooleanCast",
+      "deno": "no-extra-boolean-cast"
+    },
+    {
+      "id": "no-fallthrough",
+      "eslint": "no-fallthrough",
+      "oxlint": "no-fallthrough",
+      "biome": "suspicious/noFallthroughSwitchClause",
+      "deno": "no-fallthrough"
+    },
+    {
+      "id": "no-func-assign",
+      "eslint": "no-func-assign",
+      "oxlint": "no-func-assign",
+      "biome": "suspicious/noFunctionAssign",
+      "deno": "no-func-assign"
+    },
+    {
+      "id": "no-global-assign",
+      "eslint": "no-global-assign",
+      "oxlint": "no-global-assign",
+      "biome": "suspicious/noGlobalAssign",
+      "deno": "no-global-assign"
+    },
+    {
+      "id": "no-import-assign",
+      "eslint": "no-import-assign",
+      "oxlint": "no-import-assign",
+      "biome": "suspicious/noImportAssign",
+      "deno": "no-import-assign"
+    },
+    {
+      "id": "no-irregular-whitespace",
+      "eslint": "no-irregular-whitespace",
+      "oxlint": "no-irregular-whitespace",
+      "biome": "suspicious/noIrregularWhitespace",
+      "deno": "no-irregular-whitespace"
+    },
+    {
+      "id": "no-obj-calls",
+      "eslint": "no-obj-calls",
+      "oxlint": "no-obj-calls",
+      "biome": "correctness/noGlobalObjectCalls",
+      "deno": "no-obj-calls"
+    },
+    {
+      "id": "no-prototype-builtins",
+      "eslint": "no-prototype-builtins",
+      "oxlint": "no-prototype-builtins",
+      "biome": "suspicious/noPrototypeBuiltins",
+      "deno": "no-prototype-builtins"
+    },
+    {
+      "id": "no-redeclare",
+      "eslint": "@typescript-eslint/no-redeclare",
+      "oxlint": "no-redeclare",
+      "biome": "suspicious/noRedeclare",
+      "deno": "no-redeclare"
+    },
+    {
+      "id": "no-regex-spaces",
+      "eslint": "no-regex-spaces",
+      "oxlint": "no-regex-spaces",
+      "biome": "complexity/noAdjacentSpacesInRegex",
+      "deno": "no-regex-spaces"
+    },
+    {
+      "id": "no-self-assign",
+      "eslint": "no-self-assign",
+      "oxlint": "no-self-assign",
+      "biome": "correctness/noSelfAssign",
+      "deno": "no-self-assign"
+    },
+    {
+      "id": "no-self-compare",
+      "eslint": "no-self-compare",
+      "oxlint": "no-self-compare",
+      "biome": "suspicious/noSelfCompare",
+      "deno": "no-self-compare"
+    },
+    {
+      "id": "no-setter-return",
+      "eslint": "no-setter-return",
+      "oxlint": "no-setter-return",
+      "biome": "correctness/noSetterReturn",
+      "deno": "no-setter-return"
+    },
+    {
+      "id": "no-shadow-restricted-names",
+      "eslint": "no-shadow-restricted-names",
+      "oxlint": "no-shadow-restricted-names",
+      "biome": "suspicious/noShadowRestrictedNames",
+      "deno": "no-shadow-restricted-names"
+    },
+    {
+      "id": "no-sparse-arrays",
+      "eslint": "no-sparse-arrays",
+      "oxlint": "no-sparse-arrays",
+      "biome": "suspicious/noSparseArray",
+      "deno": "no-sparse-arrays"
+    },
+    {
+      "id": "no-this-before-super",
+      "eslint": "no-this-before-super",
+      "oxlint": "no-this-before-super",
+      "biome": "correctness/noUnreachableSuper",
+      "deno": "no-this-before-super"
+    },
+    {
+      "id": "no-unreachable",
+      "eslint": "no-unreachable",
+      "oxlint": "no-unreachable",
+      "biome": "correctness/noUnreachable",
+      "deno": "no-unreachable"
+    },
+    {
+      "id": "no-unsafe-finally",
+      "eslint": "no-unsafe-finally",
+      "oxlint": "no-unsafe-finally",
+      "biome": "correctness/noUnsafeFinally",
+      "deno": "no-unsafe-finally"
+    },
+    {
+      "id": "no-unsafe-negation",
+      "eslint": "no-unsafe-negation",
+      "oxlint": "no-unsafe-negation",
+      "biome": "suspicious/noUnsafeNegation",
+      "deno": "no-unsafe-negation"
+    },
+    {
+      "id": "no-unused-labels",
+      "eslint": "no-unused-labels",
+      "oxlint": "no-unused-labels",
+      "biome": "correctness/noUnusedLabels",
+      "deno": "no-unused-labels"
+    },
+    {
+      "id": "no-unused-vars",
+      "eslint": "@typescript-eslint/no-unused-vars",
+      "oxlint": "no-unused-vars",
+      "biome": "correctness/noUnusedVariables",
+      "deno": "no-unused-vars",
+      "biomeOptions": {
+        "ignoreRestSiblings": false,
+        "ignoreUsingDeclarations": false
+      }
+    },
+    {
+      "id": "no-useless-rename",
+      "eslint": "no-useless-rename",
+      "oxlint": "no-useless-rename",
+      "biome": "complexity/noUselessRename",
+      "deno": "no-useless-rename"
+    },
+    {
+      "id": "no-var",
+      "eslint": "no-var",
+      "oxlint": "no-var",
+      "biome": "suspicious/noVar",
+      "deno": "no-var"
+    },
+    {
+      "id": "prefer-const",
+      "eslint": "prefer-const",
+      "oxlint": "prefer-const",
+      "biome": "style/useConst",
+      "deno": "prefer-const"
+    },
+    {
+      "id": "require-await",
+      "eslint": "require-await",
+      "oxlint": "require-await",
+      "biome": "suspicious/useAwait",
+      "deno": "require-await"
+    },
+    {
+      "id": "require-yield",
+      "eslint": "require-yield",
+      "oxlint": "require-yield",
+      "biome": "correctness/useYield",
+      "deno": "require-yield"
+    },
+    {
+      "id": "use-isnan",
+      "eslint": "use-isnan",
+      "oxlint": "use-isnan",
+      "biome": "correctness/useIsNan",
+      "deno": "use-isnan"
+    },
+    {
+      "id": "valid-typeof",
+      "eslint": "valid-typeof",
+      "oxlint": "valid-typeof",
+      "biome": "correctness/useValidTypeof",
+      "deno": "valid-typeof"
+    }
+  ]
+}
