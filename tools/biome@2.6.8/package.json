@@ -1,0 +1,9 @@
+{
+  "name": "tool-biome-2.6.8",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Biome's linter (biome lint), written in Rust, @biomejs/biome@2.6.8",
+  "dependencies": {
+    "@biomejs/biome": "2.6.8"
+  }
+}

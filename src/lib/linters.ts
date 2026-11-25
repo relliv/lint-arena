@@ -1,0 +1,247 @@
+// Linter families (linters.json) and the tools built from them: one family at one
+// exact version, such as oxlint@1.94.0. Everything a run needs to start a linter is
+// resolved here: which package to install, where its executable is, and which
+// arguments, environment and thread flags it runs with.
+import { existsSync, mkdtempSync, readFileSync, realpathSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { PLATFORM, ROOT, TOOLS_DIR } from './paths.ts';
+
+export interface BinarySpec {
+  package: string;
+  file: string;
+  /** The versions that publish this platform, when it was added after the first release. */
+  versions?: string;
+}
+
+export type FamilyName = 'eslint' | 'oxlint' | 'biome' | 'deno';
+
+export interface Family {
+  name: FamilyName;
+  description: string;
+  /** How many versions the store keeps; adding a newer one removes the oldest past this. Default KEEP_VERSIONS. */
+  keep?: number;
+  /** Who maintains it and why the arena tests it; the site's Libs dialog shows it. */
+  about: { maintainer: string; repo: string; language: string; why: string };
+  package: string;
+  /** Companion packages at one exact version for every version of the family. */
+  with?: Record<string, string>;
+  versions: string;
+  runtime?: 'node';
+  binary: Record<string, BinarySpec>;
+  /** {config} is the generated config, {target} the folder linted. */
+  args: string[];
+  /** {fresh} is a new empty folder made before every invocation. */
+  env: Record<string, string>;
+  threads: { one: string[]; n: string[] } | null;
+  defaultThreads: DefaultThreads;
+  variants?: Record<string, { args: string[]; versions?: string; description: string }>;
+  source: string;
+}
+
+export type DefaultThreads = number | 'per-core';
+
+export interface Tool {
+  /** family@version, or family@version+variant: the name in results and charts. */
+  id: string;
+  /** family@version: the installed package, tools/<base>/, shared by its variants. */
+  base: string;
+  family: Family;
+  version: string;
+  variant?: string;
+}
+
+/** `default` runs a linter as it ships; a number sets that many threads. */
+export type ThreadSetting = 'default' | number;
+
+export const families: Family[] = (
+  JSON.parse(readFileSync(join(ROOT, 'linters.json'), 'utf8')) as { families: Family[] }
+).families;
+
+export function family(name: string): Family {
+  const found = families.find(f => f.name === name);
+  if (!found) {
+    throw new Error(`unknown linter family "${name}"; known: ${families.map(f => f.name).join(', ')}`);
+  }
+  return found;
+}
+
+/** Leading numeric parts of a version: "1.4.0-beta.1" is [1, 4, 0]. */
+function numericParts(version: string): number[] {
+  return (version.match(/^\d+(\.\d+)*/)?.[0] ?? '').split('.').filter(Boolean).map(Number);
+}
+
+function compare(a: number[], b: number[]): number {
+  for (let i = 0; i < Math.max(a.length, b.length); i++) {
+    const d = (a[i] ?? 0) - (b[i] ?? 0);
+    if (d !== 0) return d;
+  }
+  return 0;
+}
+
+/**
+ * Semver precedence: numeric parts first, then a release above its prereleases,
+ * then prerelease identifiers part by part (numbers numerically, words by text).
+ */
+export function compareVersions(a: string, b: string): number {
+  const d = compare(numericParts(a), numericParts(b));
+  if (d !== 0) return d;
+  const pa = a.split('-').slice(1).join('-');
+  const pb = b.split('-').slice(1).join('-');
+  if (!pa || !pb) return pa ? -1 : pb ? 1 : 0;
+  const xa = pa.split('.');
+  const xb = pb.split('.');
+  for (let i = 0; i < Math.max(xa.length, xb.length); i++) {
+    const [ia, ib] = [xa[i], xb[i]];
+    if (ia === undefined) return -1;
+    if (ib === undefined) return 1;
+    const na = /^\d+$/.test(ia);
+    const nb = /^\d+$/.test(ib);
+    const c = na && nb ? Number(ia) - Number(ib) : na ? -1 : nb ? 1 : ia.localeCompare(ib);
+    if (c !== 0) return c;
+  }
+  return 0;
+}
+
+/** Whether `version` is in a range: "*", or one comparison such as ">=9" or "<2.1". */
+export function inRange(version: string, range: string): boolean {
+  if (range === '*') return true;
+  const m = /^(>=|<=|>|<|=)?\s*(\d+(?:\.\d+)*)$/.exec(range.trim());
+  if (!m) throw new Error(`unsupported version range "${range}"`);
+  const d = compare(numericParts(version), numericParts(m[2]!));
+  switch (m[1] ?? '=') {
+    case '>=': return d >= 0;
+    case '<=': return d <= 0;
+    case '>': return d > 0;
+    case '<': return d < 0;
+    default: return d === 0;
+  }
+}
+
+/** Parses "oxlint@1.94.0", or "family@version+name" for a declared variant. */
+export function parseTool(id: string): Tool {
+  const at = id.lastIndexOf('@');
+  if (at <= 0 || at === id.length - 1) {
+    throw new Error(`"${id}" is not family@version, for example oxlint@1.94.0`);
+  }
+  const fam = family(id.slice(0, at));
+  let version = id.slice(at + 1);
+  let variant: string | undefined;
+  const plus = version.lastIndexOf('+');
+  if (plus > 0) {
+    const name = version.slice(plus + 1);
+    const declared = fam.variants?.[name];
+    if (!declared) throw new Error(`"${id}": ${fam.name} has no variant "${name}" (known: ${Object.keys(fam.variants ?? {}).join(', ') || 'none'})`);
+    version = version.slice(0, plus);
+    if (declared.versions && !inRange(version, declared.versions)) {
+      throw new Error(`"${id}": the ${name} variant needs ${fam.name} ${declared.versions}`);
+    }
+    variant = name;
+  }
+  if (!/^\d+\.\d+\.\d+[\w.+-]*$/.test(version)) {
+    throw new Error(`"${id}": give an exact version, not a range or tag`);
+  }
+  if (!inRange(version, fam.versions)) {
+    throw new Error(`${fam.package}@${version} is outside the ${fam.name} family (${fam.versions})`);
+  }
+  return { id, base: `${fam.name}@${version}`, family: fam, version, variant };
+}
+
+export const toolDir = (tool: Tool): string => join(TOOLS_DIR, tool.base);
+
+/** The variants that apply to this tool's version, as full ids. */
+export function variantIds(tool: Tool): string[] {
+  return Object.entries(tool.family.variants ?? {})
+    .filter(([, v]) => !v.versions || inRange(tool.version, v.versions))
+    .map(([name]) => `${tool.base}+${name}`);
+}
+
+/** The binary spec for this machine, or null when the linter publishes no build for it. */
+export function binarySpec(tool: Tool, platform = PLATFORM): BinarySpec | null {
+  const spec = tool.family.binary[platform] ?? tool.family.binary['*'] ?? null;
+  return spec && (!spec.versions || inRange(tool.version, spec.versions)) ? spec : null;
+}
+
+export const availableOn = (tool: Tool, platform = PLATFORM): boolean => binarySpec(tool, platform) !== null;
+
+/**
+ * The executable's absolute path, or null when it is not installed. A platform
+ * package is a dependency of the linter's package, not of tools/<id>/, so it is
+ * resolved from the linter package's real location (pnpm keeps them side by side).
+ */
+export function binaryPath(tool: Tool): string | null {
+  const spec = binarySpec(tool);
+  if (!spec) return null;
+  const main = join(toolDir(tool), 'node_modules', tool.family.package, 'package.json');
+  if (!existsSync(main)) return null;
+  try {
+    const require = createRequire(realpathSync(main));
+    const manifest = spec.package === tool.family.package ? realpathSync(main) : require.resolve(`${spec.package}/package.json`);
+    const file = join(dirname(manifest), spec.file);
+    return existsSync(file) ? file : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Where a companion package of this tool is installed, for configs that import it. */
+export function companionPath(tool: Tool, pkg: string): string {
+  const main = join(toolDir(tool), 'node_modules', pkg, 'package.json');
+  if (!existsSync(main)) throw new Error(`${tool.id}: ${pkg} is not installed; run pnpm install`);
+  return dirname(realpathSync(main));
+}
+
+/** The installed version string from the linter package's own package.json. */
+export function installedVersion(tool: Tool): string | null {
+  const main = join(toolDir(tool), 'node_modules', tool.family.package, 'package.json');
+  return existsSync(main) ? (JSON.parse(readFileSync(main, 'utf8')) as { version: string }).version : null;
+}
+
+export function threadArgs(tool: Tool, threads: ThreadSetting): string[] | null {
+  if (threads === 'default') return [];
+  const flags = tool.family.threads;
+  if (!flags) return null;
+  const template = threads === 1 ? flags.one : flags.n;
+  return template.map(a => a.replaceAll('{n}', String(threads)));
+}
+
+export interface Invocation {
+  argv: string[];
+  env: NodeJS.ProcessEnv;
+}
+
+/**
+ * The full argv and environment for linting `target` with `config`: the executable
+ * (behind node for a JavaScript linter), the family's arguments, the variant's and
+ * the thread flags. Null when the tool cannot run with this thread setting. Every
+ * call makes new {fresh} folders, so call it once per invocation.
+ */
+export function command(tool: Tool, config: { path: string; args: string[] }, target: string, threads: ThreadSetting = 'default'): Invocation | null {
+  const bin = binaryPath(tool);
+  if (!bin) throw new Error(`${tool.id} is not installed; run pnpm arena tool add ${tool.id}`);
+  const flags = threadArgs(tool, threads);
+  if (flags === null) return null;
+  const env: NodeJS.ProcessEnv = { ...process.env };
+  for (const [key, value] of Object.entries(tool.family.env)) {
+    env[key] = value === '{fresh}' ? mkdtempSync(join(tmpdir(), `lint-arena-${tool.family.name}-`)) : value;
+  }
+  return {
+    argv: [
+      ...(tool.family.runtime === 'node' ? [process.execPath, bin] : [bin]),
+      ...tool.family.args.map(a => a.replaceAll('{config}', config.path).replaceAll('{target}', target)),
+      ...config.args,
+      ...(tool.variant ? tool.family.variants![tool.variant]!.args : []),
+      ...flags,
+    ],
+    env,
+  };
+}
+
+/** The folders a {fresh} placeholder made for an invocation, to delete after it. */
+export function freshDirs(tool: Tool, env: NodeJS.ProcessEnv): string[] {
+  return Object.entries(tool.family.env)
+    .filter(([, value]) => value === '{fresh}')
+    .map(([key]) => env[key])
+    .filter((d): d is string => Boolean(d));
+}

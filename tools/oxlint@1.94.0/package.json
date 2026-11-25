@@ -1,0 +1,9 @@
+{
+  "name": "tool-oxlint-1.94.0",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The Oxc project's linter, written in Rust, oxlint@1.94.0",
+  "dependencies": {
+    "oxlint": "1.94.0"
+  }
+}

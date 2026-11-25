@@ -1,0 +1,98 @@
+{
+  "$comment": "Linter families. A family describes what stays the same across its versions; the version is chosen per run (family@version) and installed into tools/<family>@<version>/ by `pnpm arena tool add`. Fields: package: the npm package installed; with: companion packages pinned at one exact version for every version of the family (ESLint needs a TypeScript parser to read .ts files); versions: the major versions this family covers; binary: per <platform>-<arch>, or '*' for every platform, the package holding the executable and its path inside that package (a missing platform means no build is published for it); runtime: 'node' when the executable is a JavaScript file run with the current node, otherwise it is run directly; args: the arguments that lint the target with the arena's generated config, where {config} is that config's path and {target} the folder linted; env: environment set for every invocation, where {fresh} is a new empty folder made before each one (Deno keeps an incremental lint cache in DENO_DIR, so every run starts cold); threads: thread flags as documented by the linter, {n} replaced, or null when it documents none; defaultThreads: what it uses with no thread flag, as documented: a number or 'per-core'; keep: how many versions the store keeps, newest first (default 3); about: who maintains it, its repository, what it is written in and why the arena tests it, shown in the site's Libs dialog; variants: documented opt-in modes, each {args, versions, description}, run as family@version+name; source: where the thread flags are documented.",
+  "families": [
+    {
+      "name": "eslint",
+      "description": "The JavaScript linter, with the typescript-eslint parser for TypeScript files",
+      "about": {
+        "maintainer": "OpenJS Foundation",
+        "repo": "https://github.com/eslint/eslint",
+        "language": "JavaScript (runs on Node)",
+        "why": "The linter most projects run today and the source of most rule names. Every other linter is compared with it."
+      },
+      "package": "eslint",
+      "with": { "@typescript-eslint/parser": "8.73.0", "@typescript-eslint/eslint-plugin": "8.73.0" },
+      "versions": ">=9",
+      "runtime": "node",
+      "binary": {
+        "*": { "package": "eslint", "file": "bin/eslint.js" }
+      },
+      "args": ["--config", "{config}", "--format", "json", "--no-warn-ignored", "{target}"],
+      "env": {},
+      "threads": { "one": ["--concurrency", "off"], "n": ["--concurrency", "{n}"] },
+      "defaultThreads": 1,
+      "source": "eslint --help: --concurrency, default off"
+    },
+    {
+      "name": "oxlint",
+      "description": "The Oxc project's linter, written in Rust",
+      "about": {
+        "maintainer": "Oxc project (VoidZero)",
+        "repo": "https://github.com/oxc-project/oxc",
+        "language": "Rust, shipped as a Node native addon",
+        "why": "Ports ESLint's core rules and common plugins, and reads ESLint's disable comments, so it is the most direct ESLint replacement."
+      },
+      "package": "oxlint",
+      "versions": ">=1",
+      "runtime": "node",
+      "binary": {
+        "*": { "package": "oxlint", "file": "bin/oxlint" }
+      },
+      "args": ["--config", "{config}", "--format", "json", "--disable-nested-config", "{target}"],
+      "env": {},
+      "threads": { "one": ["--threads", "1"], "n": ["--threads", "{n}"] },
+      "defaultThreads": "per-core",
+      "source": "oxlint --help: --threads"
+    },
+    {
+      "name": "biome",
+      "description": "Biome's linter (biome lint), written in Rust",
+      "about": {
+        "maintainer": "Biome team",
+        "repo": "https://github.com/biomejs/biome",
+        "language": "Rust",
+        "why": "A linter and formatter in one native binary, with its own rule names mapped to ESLint's by `biome migrate eslint`."
+      },
+      "package": "@biomejs/biome",
+      "versions": ">=2",
+      "binary": {
+        "darwin-arm64": { "package": "@biomejs/cli-darwin-arm64", "file": "biome" },
+        "darwin-x64": { "package": "@biomejs/cli-darwin-x64", "file": "biome" },
+        "linux-x64": { "package": "@biomejs/cli-linux-x64", "file": "biome" },
+        "linux-arm64": { "package": "@biomejs/cli-linux-arm64", "file": "biome" },
+        "win32-x64": { "package": "@biomejs/cli-win32-x64", "file": "biome.exe" },
+        "win32-arm64": { "package": "@biomejs/cli-win32-arm64", "file": "biome.exe" }
+      },
+      "args": ["lint", "--config-path={config}", "--reporter=json", "--max-diagnostics=none", "--colors=off", "{target}"],
+      "env": {},
+      "threads": null,
+      "defaultThreads": "per-core",
+      "source": "biome lint --help documents no thread option; BIOME_THREADS is documented for biome ci only"
+    },
+    {
+      "name": "deno",
+      "description": "Deno's built-in linter (deno lint), written in Rust",
+      "about": {
+        "maintainer": "Deno Land",
+        "repo": "https://github.com/denoland/deno",
+        "language": "Rust",
+        "why": "A linter built into a runtime, with ESLint's rule names for the rules it shares."
+      },
+      "package": "deno",
+      "versions": ">=2",
+      "binary": {
+        "darwin-arm64": { "package": "@deno/darwin-arm64", "file": "deno" },
+        "darwin-x64": { "package": "@deno/darwin-x64", "file": "deno" },
+        "linux-x64": { "package": "@deno/linux-x64-glibc", "file": "deno" },
+        "linux-arm64": { "package": "@deno/linux-arm64-glibc", "file": "deno" },
+        "win32-x64": { "package": "@deno/win32-x64", "file": "deno.exe" },
+        "win32-arm64": { "package": "@deno/win32-arm64", "file": "deno.exe" }
+      },
+      "args": ["lint", "--config", "{config}", "--compact"],
+      "env": { "DENO_DIR": "{fresh}", "DENO_NO_UPDATE_CHECK": "1", "NO_COLOR": "1" },
+      "threads": null,
+      "defaultThreads": "per-core",
+      "source": "deno lint --help documents no thread option"
+    }
+  ]
+}

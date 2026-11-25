@@ -1,0 +1,11 @@
+{
+  "name": "tool-eslint-10.15.0",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The JavaScript linter, with the typescript-eslint parser for TypeScript files, eslint@10.15.0",
+  "dependencies": {
+    "eslint": "10.15.0",
+    "@typescript-eslint/parser": "8.73.0",
+    "@typescript-eslint/eslint-plugin": "8.73.0"
+  }
+}

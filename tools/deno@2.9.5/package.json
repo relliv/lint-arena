@@ -1,0 +1,9 @@
+{
+  "name": "tool-deno-2.9.5",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Deno's built-in linter (deno lint), written in Rust, deno@2.9.5",
+  "dependencies": {
+    "deno": "2.9.5"
+  }
+}

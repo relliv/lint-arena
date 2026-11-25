@@ -1,0 +1,57 @@
+// Finds linter versions worth benchmarking that the store does not have yet: per
+// family, the newest version on the npm dist-tags the family follows, once it is
+// older than the release age window.
+import { spawnSync } from 'node:child_process';
+import { compareVersions, families, inRange } from './linters.ts';
+import { listTools } from './store.ts';
+
+const RELEASE_AGE_MS = 7 * 24 * 60 * 60 * 1000;
+
+/** The dist-tags followed per family; typescript's `beta` shows a release before it ships. */
+const TAGS: Record<string, string[]> = {
+  eslint: ['latest'],
+  oxlint: ['latest'],
+  biome: ['latest'],
+  deno: ['latest'],
+};
+
+function npmView(pkg: string): { 'dist-tags': Record<string, string>; time: Record<string, string>; versions: string[] } {
+  const r = spawnSync('npm', ['view', pkg, 'dist-tags', 'time', 'versions', '--json'], { encoding: 'utf8', shell: process.platform === 'win32' });
+  if (r.status !== 0) throw new Error(`npm view ${pkg} failed: ${r.stderr}`);
+  return JSON.parse(r.stdout);
+}
+
+export function newVersions(now = Date.now()): string[] {
+  const installed = listTools();
+  const have = new Set(installed.map(t => t.id));
+  // The store prunes old versions, so a version older than the newest kept one was
+  // removed on purpose and must not come back.
+  const newest = new Map<string, string>();
+  for (const t of installed) {
+    const prev = newest.get(t.family.name);
+    if (!prev || compareVersions(t.version, prev) > 0) newest.set(t.family.name, t.version);
+  }
+  const found: string[] = [];
+  const cache = new Map<string, ReturnType<typeof npmView>>();
+  for (const family of families) {
+    if (!cache.has(family.package)) cache.set(family.package, npmView(family.package));
+    const info = cache.get(family.package)!;
+    const candidates = new Set<string>();
+    const latest = info['dist-tags']['latest'];
+    for (const tag of TAGS[family.name] ?? ['latest']) {
+      const version = info['dist-tags'][tag];
+      // A prerelease tag left pointing at a version older than latest is stale.
+      if (version && (tag === 'latest' || !latest || inRange(version, `>${latest.match(/^\d+(\.\d+)*/)?.[0] ?? '0'}`))) {
+        candidates.add(version);
+      }
+    }
+    for (const version of candidates) {
+      const published = Date.parse(info.time[version] ?? '');
+      const id = `${family.name}@${version}`;
+      const floor = newest.get(family.name);
+      const newer = !floor || compareVersions(version, floor) > 0;
+      if (inRange(version, family.versions) && now - published >= RELEASE_AGE_MS && !have.has(id) && newer) found.push(id);
+    }
+  }
+  return found;
+}
