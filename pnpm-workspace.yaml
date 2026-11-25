@@ -1,0 +1,31 @@
+# Every linter version lives in its own workspace package, tools/<family>@<version>/,
+# written by `pnpm arena tool add`. One lockfile pins all of them, companions
+# included (ESLint's TypeScript parser and plugin), so a run on any machine or CI
+# runner lints with byte-identical linters.
+packages:
+  - tools/*
+
+# Supply chain policy. A version must be 7 days old before it can be installed;
+# `pnpm arena tool add <id> --allow-young` adds the exact version to a
+# minimumReleaseAgeExclude list here, for deliberate early tests.
+minimumReleaseAge: 10080 # 7 days, in minutes
+
+# Refuses a version whose publish trust is weaker than an earlier version of the
+# same package (for example, provenance dropped).
+trustPolicy: no-downgrade
+trustPolicyIgnoreAfter: 525600 # 1 year, in minutes
+
+# Transitive dependencies come from the registry only.
+blockExoticSubdeps: true
+
+# Install scripts run only for packages listed here. Deno's postinstall only copies
+# its platform binary next to the launcher, and the arena runs the platform
+# package's binary directly, so it is off.
+strictDepBuilds: true
+allowBuilds:
+  deno: false
+
+# pnpm 11 checks node_modules before every `pnpm run` and installs when stale, so a
+# script started during a benchmark could relink the linter binaries under it.
+# Install explicitly instead.
+verifyDepsBeforeRun: false
