@@ -1,0 +1,925 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+
+@theme {
+  --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* Brand blue, and the light page behind the cards. */
+  --color-accent: #2a78d6;
+  --color-canvas: #f3f6fb;
+
+  /* Dark mode surfaces, from the page up to raised controls, all on a blue-gray base. */
+  --color-night: #05080f;
+  --color-night-panel: #0c1220;
+  --color-night-field: #0f1729;
+  --color-night-raised: #16213a;
+  --color-night-edge: #1a2540;
+  --color-night-line: #24314f;
+  /* Day headings in the run list: a step above night-raised, the row hover. */
+  --color-night-head: #22304f;
+  --color-night-head-line: #34466f;
+}
+
+/* Native controls, scrollbars included, follow the page's light or dark mode. */
+html {
+  @apply scheme-light dark:scheme-dark;
+}
+
+/* The page behind an open dialog stays put instead of scrolling with it. */
+html:has(dialog[open]) {
+  @apply overflow-hidden;
+}
+
+body {
+  @apply bg-canvas text-slate-900 antialiased dark:bg-night dark:text-slate-100;
+}
+
+code {
+  @apply rounded bg-slate-200/60 px-1.5 py-0.5 font-mono text-[0.85em] dark:bg-night-raised;
+}
+
+.page {
+  @apply mx-auto max-w-6xl px-4 pb-16 sm:px-6;
+}
+
+.topbar {
+  @apply flex items-center justify-between py-5;
+
+  .brand {
+    @apply flex items-center gap-2.5 font-mono text-sm font-semibold tracking-tight;
+  }
+
+  .brand-mark {
+    @apply grid size-7 place-items-center rounded-lg bg-accent text-white shadow-sm shadow-accent/30;
+
+    svg {
+      @apply size-[18px];
+    }
+  }
+
+  .topbar-link {
+    @apply inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 dark:hover:text-slate-100;
+
+    svg {
+      @apply size-4 shrink-0;
+    }
+  }
+
+  .topbar-links {
+    @apply flex items-center gap-4 sm:gap-5;
+  }
+}
+
+/* The Libs dialog: a centered panel on wide screens, a full-screen sheet on phones. */
+.libs {
+  /* The border lives here, outside the scrolling body, so the sticky header cannot paint over its top edge. */
+  @apply m-auto h-dvh max-h-dvh w-full max-w-full overflow-hidden bg-transparent p-0 text-slate-900 outline-none sm:h-auto sm:max-h-[min(88dvh,56rem)] sm:max-w-4xl sm:rounded-lg sm:border sm:border-slate-300 sm:shadow-2xl dark:text-slate-100 sm:dark:border-slate-700/55;
+
+  &::backdrop {
+    @apply bg-slate-950/60 backdrop-blur-sm;
+  }
+
+  &[open] {
+    @apply flex;
+  }
+
+  .libs-body {
+    /* Opening the dialog focuses this scroller so arrow keys scroll it; its focus ring would only redraw the dialog's edge. */
+    @apply flex w-full flex-col overflow-y-auto overscroll-contain bg-canvas outline-none dark:bg-night;
+  }
+
+  .libs-head {
+    @apply sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-slate-200 bg-canvas/95 px-4 py-4 backdrop-blur sm:px-6 dark:border-night-edge dark:bg-night/95;
+
+    h2 {
+      @apply text-lg font-semibold tracking-tight;
+    }
+
+    .hint {
+      @apply mt-0.5 text-sm text-slate-500;
+    }
+  }
+
+  .close {
+    @apply grid size-8 shrink-0 place-items-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-night-line dark:hover:bg-night-raised dark:hover:text-slate-100;
+
+    svg {
+      @apply size-4;
+    }
+  }
+
+  .libs-grid {
+    @apply grid gap-3 p-4 sm:grid-cols-2 sm:gap-4 sm:p-6;
+  }
+}
+
+.lib {
+  @apply flex flex-col gap-3 rounded-md border border-slate-200 bg-white p-4 dark:border-night-edge dark:bg-night-panel;
+
+  .lib-head {
+    @apply flex items-center justify-between gap-3;
+
+    h3 {
+      @apply flex items-center font-mono text-base font-semibold;
+    }
+  }
+
+  .lib-by {
+    @apply rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 dark:bg-night-raised dark:text-slate-300;
+  }
+
+  .lib-summary {
+    @apply text-sm font-medium;
+  }
+
+  .lib-why {
+    @apply text-sm text-slate-600 dark:text-slate-400;
+  }
+
+  .lib-facts {
+    @apply grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm;
+
+    dt {
+      @apply text-slate-500;
+    }
+
+    dd {
+      @apply flex min-w-0 flex-wrap gap-1;
+    }
+
+    code {
+      @apply text-xs;
+    }
+  }
+
+  /* Each tested version opens its own page on npm. */
+  .lib-version {
+    @apply rounded transition-colors;
+
+    code {
+      @apply transition-colors;
+    }
+
+    &:hover code,
+    &:focus-visible code {
+      @apply bg-accent/15 text-accent dark:text-sky-300;
+    }
+  }
+
+  .lib-variant {
+    @apply flex-col gap-1;
+
+    .lib-variant-text {
+      @apply text-xs text-slate-500 dark:text-slate-400;
+    }
+  }
+
+  .lib-range {
+    @apply text-xs text-slate-500;
+  }
+
+  .lib-links {
+    @apply mt-auto flex flex-wrap gap-x-4 gap-y-1 border-t border-slate-100 pt-3 text-sm dark:border-night-edge;
+
+    a {
+      @apply inline-flex items-center gap-1 text-accent hover:underline;
+    }
+
+    svg {
+      @apply size-3.5;
+    }
+  }
+}
+
+.controls {
+  @apply mb-8 flex flex-wrap items-end gap-4;
+}
+
+.field {
+  @apply flex w-full min-w-0 flex-col gap-1.5 sm:w-auto;
+
+  > span {
+    @apply text-[11px] font-medium tracking-wider text-slate-500 uppercase;
+  }
+
+  select {
+    @apply max-w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-xs dark:border-night-line dark:bg-night-field;
+  }
+}
+
+.picker-row {
+  @apply flex items-stretch gap-2;
+
+  .run-picker {
+    @apply min-w-0 flex-1 sm:min-w-[26rem] sm:flex-none;
+  }
+}
+
+/* Next to the run picker while runs are compared; on phones only the icon shows. */
+.exit-compare {
+  @apply inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-3 text-sm font-medium text-accent transition-colors hover:bg-accent/20 dark:text-sky-300;
+
+  svg {
+    @apply size-4;
+  }
+
+  span {
+    @apply hidden sm:inline;
+  }
+}
+
+.run-picker {
+  @apply relative w-full sm:w-auto sm:min-w-[26rem];
+
+  .platform {
+    @apply ml-1.5 rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[11px] font-medium text-slate-600 dark:bg-night-raised dark:text-slate-300;
+  }
+
+  .trigger {
+    @apply flex w-full items-center gap-3 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left shadow-xs transition-colors hover:border-slate-400 dark:border-night-line dark:bg-night-field dark:hover:border-slate-500;
+
+    &[aria-expanded='true'] {
+      @apply border-accent ring-2 ring-accent/20;
+
+      .chevron {
+        @apply rotate-180;
+      }
+    }
+  }
+
+  .trigger-text {
+    @apply flex min-w-0 flex-1 flex-col;
+  }
+
+  .trigger-main {
+    @apply flex items-center text-sm font-semibold;
+  }
+
+  .trigger-sub {
+    @apply truncate text-xs text-slate-500;
+  }
+
+  .chevron {
+    @apply size-4 shrink-0 text-slate-500 transition-transform;
+  }
+
+  .popover {
+    @apply absolute top-full left-0 z-20 mt-2 w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl sm:w-[32rem] dark:border-night-line dark:bg-night-panel;
+
+    &[hidden] {
+      @apply hidden;
+    }
+  }
+
+  .search {
+    @apply flex items-center gap-2 border-b border-slate-200 px-3 py-2.5 dark:border-night-edge;
+
+    svg {
+      @apply size-4 shrink-0 text-slate-400;
+    }
+
+    input {
+      @apply w-full bg-transparent text-sm outline-none placeholder:text-slate-400;
+    }
+  }
+
+  .list {
+    @apply max-h-80 overflow-y-auto overscroll-contain py-1;
+  }
+
+  .group {
+    &[hidden] {
+      @apply hidden;
+    }
+  }
+
+  .group-head {
+    @apply sticky top-0 z-10 flex items-center gap-2 border-y border-slate-200 bg-slate-50/95 px-3 py-1.5 backdrop-blur dark:border-night-head-line dark:bg-night-head/95;
+  }
+
+  .group-date {
+    @apply text-[11px] font-semibold tracking-wider text-slate-500 uppercase;
+  }
+
+  .group-count {
+    @apply text-[11px] text-slate-400;
+  }
+
+  .compare-button {
+    @apply ml-auto rounded-md border border-slate-300 bg-white px-2 py-0.5 text-[11px] font-medium text-accent transition-colors hover:border-accent hover:bg-accent/5 dark:border-slate-600 dark:bg-night-panel/60;
+
+    &[hidden] {
+      @apply hidden;
+    }
+  }
+
+  .option {
+    @apply flex w-full items-center gap-3 px-3 py-2 text-left transition-colors;
+
+    &[hidden] {
+      @apply hidden;
+    }
+
+    &.active,
+    &:hover {
+      @apply bg-slate-100 dark:bg-night-raised;
+    }
+
+    &[aria-selected='true'] .check {
+      @apply opacity-100;
+    }
+  }
+
+  .option-text {
+    @apply flex min-w-0 flex-1 flex-col;
+  }
+
+  .option-main {
+    @apply flex items-center text-sm font-medium;
+  }
+
+  .option-sub {
+    @apply truncate text-xs text-slate-500;
+  }
+
+  .source {
+    @apply ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold tracking-wider uppercase;
+
+    &.ci {
+      @apply bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300;
+    }
+
+    &.local {
+      @apply bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300;
+    }
+
+    &.act {
+      @apply bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300;
+    }
+  }
+
+  .check {
+    @apply size-4 shrink-0 text-accent opacity-0;
+  }
+
+  .empty {
+    @apply px-3 py-6 text-center text-sm text-slate-500;
+
+    &[hidden] {
+      @apply hidden;
+    }
+  }
+}
+
+/* "+fast" after a checker name: a button that opens the shared variant popover. */
+.variant-tag {
+  @apply ml-0.5 inline-flex cursor-help items-center rounded-md border border-dashed border-current/50 px-1 py-px font-mono text-[0.85em] leading-tight transition-colors outline-none hover:bg-accent/10 focus-visible:ring-2 focus-visible:ring-accent/50;
+
+  &[aria-expanded='true'] {
+    @apply border-solid bg-accent/15 text-accent dark:text-sky-300;
+  }
+}
+
+/* Lives on <body> and is placed by script next to the tag, so table scroll containers cannot clip it. */
+.variant-pop {
+  @apply fixed z-50 flex w-max max-w-80 flex-col gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-2.5 text-xs leading-relaxed font-normal text-slate-600 shadow-xl dark:border-night-line dark:bg-night-raised dark:text-slate-300;
+
+  &[hidden] {
+    @apply hidden;
+  }
+
+  b {
+    @apply text-sm font-semibold text-slate-900 dark:text-slate-100;
+  }
+
+  code {
+    @apply text-[0.9em];
+  }
+
+  .variant-note {
+    @apply border-t border-slate-200 pt-1.5 text-slate-500 dark:border-night-line;
+  }
+}
+
+/* Under the run picker on an older run: what the newest run of that platform tests differently. */
+.version-note {
+  @apply mb-6 flex flex-wrap items-start gap-3 rounded-lg border border-sky-200 bg-sky-50 p-3 text-sm text-sky-900 sm:flex-nowrap sm:p-4 dark:border-sky-900/70 dark:bg-sky-950/40 dark:text-sky-100;
+
+  .note-icon {
+    @apply mt-0.5 size-4 shrink-0 text-sky-600 dark:text-sky-400;
+  }
+
+  /* On phones the text takes the whole row, so the button wraps below it. */
+  .note-body {
+    @apply flex min-w-[calc(100%-1.75rem)] flex-1 flex-col gap-1.5 sm:min-w-0;
+  }
+
+  .note-line {
+    @apply flex flex-wrap items-center gap-1.5;
+  }
+
+  .note-label {
+    @apply mr-1 text-xs text-sky-700 dark:text-sky-300;
+  }
+
+  .note-chip {
+    @apply rounded-md px-1.5 py-0.5 font-mono text-xs;
+
+    &.added {
+      @apply bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300;
+    }
+
+    &.removed {
+      @apply bg-slate-200 text-slate-700 line-through decoration-slate-400 dark:bg-night-raised dark:text-slate-400;
+    }
+  }
+
+  .note-action {
+    @apply ml-7 shrink-0 rounded-md border border-sky-300 bg-white px-2.5 py-1 text-xs font-medium text-sky-800 transition-colors hover:bg-sky-100 sm:ml-0 dark:border-sky-800 dark:bg-transparent dark:text-sky-200 dark:hover:bg-sky-900/50;
+  }
+}
+
+.compare-panel {
+  @apply border-accent/30 ring-1 ring-accent/10;
+
+  .compare-actions {
+    @apply flex items-center gap-2;
+  }
+
+  .compare-note {
+    @apply mb-3 rounded-md bg-sky-50 px-3 py-2 text-xs text-sky-900 dark:bg-sky-950/40 dark:text-sky-100;
+  }
+
+  .compare-runs {
+    @apply mb-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600 dark:text-slate-400;
+  }
+
+  .compare-run {
+    @apply inline-flex items-center;
+  }
+
+  .muted {
+    @apply text-slate-400;
+  }
+
+  .compare-table {
+    @apply mt-4;
+
+    th .swatch {
+      @apply mr-1.5;
+    }
+
+    /* Every header is a sort button: first click best first, second worst first, third back to family order. */
+    .sort {
+      @apply inline-flex items-end gap-1 rounded-md text-left uppercase transition-colors outline-none hover:text-slate-900 focus-visible:ring-2 focus-visible:ring-accent/50 dark:hover:text-slate-100;
+
+      .sort-icon {
+        @apply mb-px size-3.5 shrink-0 opacity-40;
+      }
+    }
+
+    th[aria-sort='ascending'],
+    th[aria-sort='descending'] {
+      .sort {
+        @apply text-accent dark:text-sky-300;
+      }
+
+      .sort-icon {
+        @apply opacity-100;
+      }
+    }
+
+    .run-head {
+      @apply relative align-bottom text-xs font-medium tracking-normal normal-case;
+
+      .sort {
+        @apply ml-auto normal-case;
+      }
+
+      .head-text {
+        @apply flex flex-col items-end;
+      }
+
+      .head-main {
+        @apply inline-flex items-center;
+      }
+
+      /* Local and CI runs answer different questions; the same pill as in the run list says which. */
+      .source {
+        @apply ml-1.5 rounded-full px-1.5 py-px text-[9px] font-semibold tracking-wider uppercase;
+
+        &.ci {
+          @apply bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300;
+        }
+
+        &.local {
+          @apply bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300;
+        }
+
+        &.act {
+          @apply bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300;
+        }
+      }
+
+      .sub {
+        @apply block max-w-40 truncate text-[11px] font-normal text-slate-400;
+      }
+
+      /* Keyboard focus shows it; focus left by a mouse click does not, or it would cover the sorted rows. */
+      &:hover .run-tip,
+      &:has(.sort:focus-visible) .run-tip {
+        @apply visible opacity-100;
+      }
+    }
+
+    /* The whole run behind a cut header: CPU, cores, OS, source and day. */
+    .run-tip {
+      @apply invisible absolute top-full right-0 z-20 mt-1 flex w-max max-w-72 flex-col gap-0.5 rounded-md border border-slate-200 bg-white px-3 py-2 text-left text-xs font-normal whitespace-normal text-slate-600 opacity-0 shadow-lg transition-opacity dark:border-night-line dark:bg-night-raised dark:text-slate-300;
+
+      b {
+        @apply font-semibold text-slate-900 dark:text-slate-100;
+      }
+    }
+
+    .cell {
+      @apply inline-block rounded-md px-1.5 py-0.5;
+    }
+
+    .best {
+      @apply font-bold text-slate-900 dark:text-white;
+    }
+
+    .winner .cell {
+      @apply bg-accent/15 font-semibold text-accent ring-1 ring-accent/40 dark:bg-accent/25 dark:text-sky-300;
+    }
+
+    .loser .cell {
+      @apply bg-rose-500/10 font-semibold text-rose-700 ring-1 ring-rose-500/35 dark:bg-rose-500/15 dark:text-rose-300;
+    }
+  }
+
+  .compare-legend {
+    @apply mt-3 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs text-slate-500;
+
+    .cell {
+      @apply inline-block rounded-md px-1.5 py-0.5;
+    }
+
+    .winner-key {
+      @apply bg-accent/15 font-semibold text-accent ring-1 ring-accent/40 dark:bg-accent/25 dark:text-sky-300;
+    }
+
+    .loser-key {
+      @apply ml-3 bg-rose-500/10 font-semibold text-rose-700 ring-1 ring-rose-500/35 dark:bg-rose-500/15 dark:text-rose-300;
+    }
+
+    .best-key {
+      @apply ml-3 font-bold text-slate-900 dark:text-white;
+    }
+  }
+}
+
+.segmented {
+  @apply inline-flex max-w-full gap-0.5 overflow-x-auto rounded-lg border border-slate-300 bg-white p-1 shadow-xs dark:border-night-line dark:bg-night-field;
+
+  button {
+    @apply shrink-0 rounded-md px-3 py-1.5 text-sm whitespace-nowrap text-slate-600 transition-colors dark:text-slate-400;
+
+    &[aria-selected='true'] {
+      @apply bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900;
+    }
+
+    &:hover:not([aria-selected='true']) {
+      @apply text-slate-900 dark:text-slate-100;
+    }
+  }
+}
+
+.hero {
+  @apply mb-6;
+
+  .eyebrow {
+    @apply mb-3 font-mono text-xs tracking-wider text-slate-500 uppercase;
+  }
+
+  .headline {
+    @apply max-w-4xl text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-4xl;
+  }
+
+  .accent {
+    @apply underline decoration-slate-300 decoration-2 underline-offset-4 dark:decoration-slate-600;
+  }
+
+  .sub {
+    @apply mt-3 max-w-3xl text-slate-600 dark:text-slate-400;
+  }
+}
+
+.tiles {
+  @apply mt-6 grid grid-cols-2 gap-3 md:grid-cols-4;
+}
+
+.tile {
+  @apply rounded-md border border-slate-200 bg-white p-4 dark:border-night-edge dark:bg-night-panel;
+
+  .tile-label {
+    @apply flex items-center gap-2 text-xs font-medium text-slate-500;
+  }
+
+  .tile-value {
+    @apply mt-2 font-mono text-2xl font-semibold tracking-tight tabular-nums;
+  }
+
+  .tile-of {
+    @apply text-base font-normal text-slate-400;
+  }
+
+  .tile-note {
+    @apply mt-1 truncate text-xs text-slate-500;
+  }
+}
+
+.meta {
+  @apply mb-8 flex flex-wrap gap-2;
+}
+
+.badge {
+  @apply rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600 dark:border-night-edge dark:bg-night-panel dark:text-slate-400;
+
+  &.local {
+    @apply border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300;
+  }
+
+  &.act {
+    @apply border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-300;
+  }
+
+  &.ci {
+    @apply border-sky-200 bg-sky-50 text-sky-800 dark:border-sky-900 dark:bg-sky-950/50 dark:text-sky-300;
+  }
+
+  /* The checked project: a link to its repository at the exact commit, with a tooltip saying what it is. */
+  &.project {
+    @apply relative inline-flex items-center gap-1.5 border-accent/40 text-slate-700 transition-colors outline-none hover:border-accent hover:text-accent focus-visible:ring-2 focus-visible:ring-accent/50 dark:border-accent/50 dark:text-slate-200 dark:hover:text-sky-300;
+
+    svg {
+      @apply size-3.5 shrink-0;
+    }
+
+    code {
+      @apply px-1 py-0 text-[11px];
+    }
+
+    &:hover .project-tip,
+    &:focus-visible .project-tip {
+      @apply visible opacity-100;
+    }
+  }
+
+  .project-tip {
+    @apply invisible absolute top-full left-0 z-20 mt-1.5 flex w-max max-w-80 flex-col gap-1 rounded-md border border-slate-200 bg-white px-3 py-2 text-left text-xs font-normal whitespace-normal text-slate-600 opacity-0 shadow-lg transition-opacity dark:border-night-line dark:bg-night-raised dark:text-slate-300;
+
+    b {
+      @apply font-semibold text-slate-900 dark:text-slate-100;
+    }
+  }
+
+  &.warn {
+    @apply border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-300;
+  }
+}
+
+.card {
+  @apply mb-6 rounded-lg border border-slate-200 bg-white p-4 shadow-xs sm:p-6 dark:border-night-edge dark:bg-night-panel;
+
+  h2 {
+    @apply text-base font-semibold tracking-tight;
+  }
+
+  .hint {
+    @apply mt-1 mb-4 text-sm text-slate-500;
+  }
+
+  .card-head {
+    @apply mb-4 flex flex-wrap items-start justify-between gap-4;
+
+    /* The card-head owns the gap below; the hint inside it should not add its own. */
+    .hint {
+      @apply mb-0;
+    }
+  }
+}
+
+.grid-2 {
+  @apply grid gap-6 lg:grid-cols-2;
+
+  /* min-w-0 lets a wide table's .table-scroll scroll instead of stretching the grid column. */
+  .card {
+    @apply mb-0 flex min-w-0 flex-col;
+  }
+
+  & + .card {
+    @apply mt-6;
+  }
+}
+
+.chart {
+  @apply w-full;
+
+  /* Grows to the card's height, which a taller neighbor in .grid-2 sets; never below 360px. */
+  &.fill {
+    @apply min-h-90 flex-1;
+  }
+}
+
+.legend {
+  @apply mb-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600 dark:text-slate-400;
+
+  .legend-item {
+    @apply inline-flex items-center gap-1.5;
+  }
+}
+
+.swatch {
+  @apply mr-2 inline-block size-2.5 shrink-0 rounded-[3px] align-middle;
+}
+
+.trends {
+  @apply grid gap-4 sm:grid-cols-2 lg:grid-cols-3;
+
+  .trend {
+    @apply rounded-md border border-slate-200 p-2.5 sm:p-3 dark:border-night-edge;
+  }
+
+  .trend-name {
+    @apply flex items-center font-mono text-sm font-medium;
+  }
+}
+
+.table-scroll {
+  @apply -mx-1 overflow-x-auto px-1;
+}
+
+.data {
+  @apply w-full border-collapse text-sm;
+
+  th {
+    @apply border-b border-slate-200 px-2 pb-2 text-left text-[11px] font-medium tracking-wider whitespace-nowrap text-slate-500 uppercase dark:border-night-edge;
+  }
+
+  td {
+    @apply border-b border-slate-100 px-2 py-2 whitespace-nowrap dark:border-night-edge/70;
+  }
+
+  tr:last-child td {
+    @apply border-b-0;
+  }
+
+  .num {
+    @apply text-right font-mono tabular-nums;
+  }
+
+  .strong {
+    @apply font-semibold;
+  }
+
+  .muted {
+    @apply text-slate-500;
+  }
+
+  .meter {
+    @apply inline-block h-1.5 w-14 overflow-hidden rounded-full bg-slate-100 align-middle dark:bg-night-raised;
+
+    span {
+      @apply block h-full rounded-full;
+    }
+  }
+
+  .baseline-tag {
+    @apply ml-2 rounded-md bg-slate-100 px-1.5 py-px text-[10px] font-medium tracking-wide text-slate-500 uppercase dark:bg-night-raised dark:text-slate-400;
+  }
+
+  .meter-value {
+    @apply ml-2 font-mono text-xs tabular-nums;
+  }
+}
+
+.chip {
+  @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium;
+
+  &.ok {
+    @apply bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300;
+  }
+
+  &.warn {
+    @apply bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300;
+  }
+
+  &.bad {
+    @apply bg-rose-50 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300;
+  }
+
+  &.ref {
+    @apply bg-slate-100 text-slate-600 dark:bg-night-raised dark:text-slate-300;
+  }
+}
+
+/* Findings: the note under the table, linter errors, and the per linter rule breakdown. */
+.card {
+  .hint a {
+    @apply text-accent hover:underline;
+  }
+
+  .legend-note {
+    @apply mt-3 mb-0 text-xs;
+  }
+
+  .sub-head {
+    @apply mt-6 text-sm font-semibold tracking-tight;
+  }
+
+  .errors {
+    @apply mt-3 flex flex-col gap-1 text-xs text-rose-700 dark:text-rose-300;
+  }
+}
+
+.differs {
+  @apply grid items-start gap-2 md:grid-cols-2;
+
+  .differ {
+    @apply rounded-md border border-slate-200 dark:border-night-edge;
+
+    &[open] summary {
+      @apply border-b border-slate-200 dark:border-night-edge;
+    }
+
+    summary {
+      @apply flex cursor-pointer flex-wrap items-center gap-x-2 px-3 py-2 text-sm;
+    }
+
+    .differ-name {
+      @apply font-mono font-medium;
+    }
+
+    .differ-sum {
+      @apply ml-auto text-xs text-slate-500;
+    }
+
+    .table-scroll {
+      @apply px-3 pb-1;
+    }
+  }
+
+  code {
+    @apply text-xs;
+  }
+
+  .rule-own,
+  .rule-tag {
+    @apply ml-2 text-[11px] text-slate-500;
+  }
+
+  .rule-tag {
+    @apply rounded-md bg-slate-100 px-1.5 py-px font-medium tracking-wide uppercase dark:bg-night-raised dark:text-slate-400;
+  }
+}
+
+/* The Rules dialog: one table, scrolling sideways on phones. */
+.rules {
+  .rules-table {
+    @apply p-4 sm:p-6;
+  }
+
+  code {
+    @apply text-xs;
+  }
+
+  .rule-id {
+    @apply font-mono text-xs font-medium;
+  }
+
+  .muted {
+    @apply text-slate-400;
+  }
+}
+
+.empty {
+  @apply mt-16 rounded-lg border border-dashed border-slate-300 p-12 text-center dark:border-night-line;
+
+  h2 {
+    @apply mb-2 text-lg font-semibold;
+  }
+
+  p {
+    @apply text-slate-500;
+  }
+}
+
+.footer {
+  @apply mt-10 text-xs text-slate-500;
+
+  a {
+    @apply underline underline-offset-2;
+  }
+}
