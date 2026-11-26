@@ -99,16 +99,36 @@ function tile(label: string, value: string, note: string, swatch?: string): stri
   </div>`;
 }
 
+/** The share of the reference's findings a linter must report to lead the headline. */
+const AGREEMENT_BAR = 0.99;
+const pctText = (n: number): string => `${(n * 100).toFixed(n === 1 ? 0 : 1)}%`;
+
 function hero(run: RunSummary, linters: LinterSummary[]): string {
   const fastest = linters[0]!;
   const ref = linters.find(c => c.id === run.reference);
   const others = run.parity.filter(p => p.id !== run.reference);
   const agree = others.filter(p => p.parity === 'identical' || p.parity === 'same-lines').length;
   const lightest = [...linters].sort((a, b) => a.rssMiB - b.rssMiB)[0]!;
+  // Speed only counts next to agreement: the headline names the fastest linter of
+  // another family that reports at least 99% of the reference's findings. When none
+  // does, it names the fastest one anyway, with its share and its extra findings.
+  const refFamily = linters.find(l => l.id === run.reference)?.family;
+  const parityOf = (id: string) => run.parity.find(p => p.id === id);
+  const rivals = linters.filter(l => l.family !== refFamily && parityOf(l.id)?.parity !== 'failed');
+  const lead = rivals.find(l => (parityOf(l.id)?.agreement ?? 0) >= AGREEMENT_BAR);
+  const pick = lead ?? rivals[0];
+  const share = (id: string) => {
+    const p = parityOf(id);
+    return p ? `<span class="accent">${pctText(p.agreement)}</span> of its findings${p.extra ? ` and ${p.extra.toLocaleString('en-US')} more` : ''}` : '';
+  };
+  const headline = !pick
+    ? `${esc(short(run.reference))} is the only linter timed on ${esc(run.label)}`
+    : lead
+      ? `<span style="color:${familyColor(pick.family)}">${nameHtml(pick.id)}</span> lints ${esc(run.label)} <span class="accent">${times(pick.speedup)}</span> faster than ${esc(short(run.reference))} and reports ${share(pick.id)}`
+      : `No linter reports ${pctText(AGREEMENT_BAR)} of ${esc(short(run.reference))}'s findings on ${esc(run.label)}; <span style="color:${familyColor(pick.family)}">${nameHtml(pick.id)}</span> is <span class="accent">${times(pick.speedup)}</span> faster and reports ${share(pick.id)}`;
   return `<section class="hero">
     <p class="eyebrow">${esc(run.label)} · ${esc(day(run.date))}</p>
-    <h1 class="headline"><span style="color:${familyColor(fastest.family)}">${nameHtml(fastest.id)}</span> lints ${esc(run.label)}
-      ${fastest.id === run.reference ? 'fastest' : `<span class="accent">${times(fastest.speedup)}</span> faster than ${esc(short(run.reference))}`}</h1>
+    <h1 class="headline">${headline}</h1>
     <p class="sub">${run.files} files with ${run.rules} shared rules, median of ${run.rounds} rounds on ${esc(run.machine.cpu)}.</p>
     <div class="tiles">
       ${tile('Fastest pass', secs(fastest.median), nameHtml(fastest.id), familyColor(fastest.family))}
